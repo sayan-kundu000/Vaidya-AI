@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaidya AI - Specialist Consultations</title>
+    <meta name="description" content="Talk to AI medical and health specialists.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Custom styling for the voice controls -->
+    <style>
+        .voice-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            justify-content: flex-end;
+            padding-right: 1rem;
+        }
+        #mic-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        #mic-btn:hover {
+            color: var(--primary-hover);
+        }
+        #mic-btn.recording {
+            color: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .tts-toggle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            user-select: none;
+        }
+        .tts-toggle input {
+            cursor: pointer;
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h1>Vaidya AI</h1>
+            </div>
+            
+            <nav class="expert-list" id="expert-list">
+                <button class="expert-btn active" data-persona="pediatrician"><i class="fa-solid fa-baby"></i> Pediatrician</button>
+                <button class="expert-btn" data-persona="neurologist"><i class="fa-solid fa-brain"></i> Neurologist</button>
+                <button class="expert-btn" data-persona="cardiologist"><i class="fa-solid fa-heart"></i> Cardiologist</button>
+                <button class="expert-btn" data-persona="psychologist"><i class="fa-solid fa-user-doctor"></i> Psychologist</button>
+                <button class="expert-btn" data-persona="nutritionist"><i class="fa-solid fa-apple-whole"></i> Nutritionist</button>
+                <button class="expert-btn" data-persona="pharmacist"><i class="fa-solid fa-pills"></i> Pharmacist</button>
+                <button class="expert-btn" data-persona="physiotherapist"><i class="fa-solid fa-person-walking"></i> Physiotherapist</button>
+                
+                <button class="expert-btn" data-persona="general physician"><i class="fa-solid fa-stethoscope"></i> General Physician</button>
+                <button class="expert-btn" data-persona="all-in-one surgeon"><i class="fa-solid fa-scissors"></i> All-In-One Surgeon</button>
+                <button class="expert-btn" data-persona="medicine specialist"><i class="fa-solid fa-stethoscope"></i> Medicine Specialist</button>
+                <button class="expert-btn" data-persona="hematologist"><i class="fa-solid fa-droplet"></i> Hematologist</button>
+                <button class="expert-btn" data-persona="neurophysiologist"><i class="fa-solid fa-brain"></i> Neurophysiologist</button>
+                <button class="expert-btn" data-persona="endocrinologist"><i class="fa-solid fa-vial"></i> Endocrinologist</button>
+                <button class="expert-btn" data-persona="pulmonologist"><i class="fa-solid fa-lungs"></i> Pulmonologist</button>
+                <button class="expert-btn" data-persona="gastroenterologist"><i class="fa-solid fa-briefcase-medical"></i> Gastroenterologist</button>
+                <button class="expert-btn" data-persona="hepatologist"><i class="fa-solid fa-virus"></i> Hepatologist</button>
+                <button class="expert-btn" data-persona="nephrologist"><i class="fa-solid fa-filter"></i> Nephrologist</button>
+                <button class="expert-btn" data-persona="dermatologist"><i class="fa-solid fa-hand-dots"></i> Dermatologist</button>
+                <button class="expert-btn" data-persona="allergist"><i class="fa-solid fa-head-side-cough"></i> Allergist</button>
+                <button class="expert-btn" data-persona="immunologist"><i class="fa-solid fa-shield-virus"></i> Immunologist</button>
+                <button class="expert-btn" data-persona="infectious disease specialist"><i class="fa-solid fa-bacterium"></i> Infectious Disease Spec.</button>
+                <button class="expert-btn" data-persona="physiatrist"><i class="fa-solid fa-wheelchair"></i> Physiatrist</button>
+                <button class="expert-btn" data-persona="gynecologist"><i class="fa-solid fa-person-dress"></i> Gynecologist</button>
+                <button class="expert-btn" data-persona="andrologist"><i class="fa-solid fa-person"></i> Andrologist</button>
+                <button class="expert-btn" data-persona="obstetrician"><i class="fa-solid fa-baby-carriage"></i> Obstetrician</button>
+                <button class="expert-btn" data-persona="fertility specialist"><i class="fa-solid fa-seedling"></i> Fertility Specialist</button>
+                <button class="expert-btn" data-persona="dentist"><i class="fa-solid fa-tooth"></i> Dentist</button>
+                <button class="expert-btn" data-persona="periodontist"><i class="fa-solid fa-teeth"></i> Periodontist</button>
+                <button class="expert-btn" data-persona="orthodontist"><i class="fa-solid fa-teeth-open"></i> Orthodontist</button>
+                <button class="expert-btn" data-persona="ophthalmologist"><i class="fa-solid fa-eye"></i> Ophthalmologist</button>
+                <button class="expert-btn" data-persona="ent specialist"><i class="fa-solid fa-ear-listen"></i> ENT Specialist</button>
+                <button class="expert-btn" data-persona="audiologist"><i class="fa-solid fa-volume-high"></i> Audiologist</button>
+                <button class="expert-btn" data-persona="optometrist"><i class="fa-solid fa-glasses"></i> Optometrist</button>
+                <button class="expert-btn" data-persona="psychiatrist"><i class="fa-solid fa-brain"></i> Psychiatrist</button>
+                <button class="expert-btn" data-persona="neuropsychiatrist"><i class="fa-solid fa-brain"></i> Neuropsychiatrist</button>
+                <button class="expert-btn" data-persona="neonatologist"><i class="fa-solid fa-baby"></i> Neonatologist</button>
+                <button class="expert-btn" data-persona="geriatrician"><i class="fa-solid fa-person-cane"></i> Geriatrician</button>
+                <button class="expert-btn" data-persona="orthopedist"><i class="fa-solid fa-bone"></i> Orthopedist</button>
+                <button class="expert-btn" data-persona="rheumatologist"><i class="fa-solid fa-joint"></i> Rheumatologist</button>
+                <button class="expert-btn" data-persona="oncologist"><i class="fa-solid fa-ribbon"></i> Oncologist</button>
+                <button class="expert-btn" data-persona="ayurveda doctor"><i class="fa-solid fa-leaf"></i> Ayurveda Doctor</button>
+                <button class="expert-btn" data-persona="homeopathy doctor"><i class="fa-solid fa-mortar-pestle"></i> Homeopathy Doctor</button>
+                <button class="expert-btn" data-persona="unani doctor"><i class="fa-solid fa-spa"></i> Unani Doctor</button>
+                <button class="expert-btn" data-persona="naturopathy doctor"><i class="fa-solid fa-seedling"></i> Naturopathy Doctor</button>
+                <button class="expert-btn" data-persona="siddha doctor"><i class="fa-solid fa-om"></i> Siddha Doctor</button>
+            </nav>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area">
+            <header class="chat-header">
+                <div class="expert-info">
+                    <div class="expert-avatar" id="current-expert-icon">
+                        <i class="fa-solid fa-baby"></i>
+                    </div>
+                    <div>
+                        <h2 id="current-expert-name">Pediatrician</h2>
+                        <span class="status">● Online</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="chat-container" id="chat-container">
+                <div class="message system-msg">
+                    Welcome! I am your AI Pediatrician. How can I help you today?
+                </div>
+            </div>
+
+            <div class="typing-indicator hidden" id="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+
+            <div class="disclaimer-banner">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p><strong>Disclaimer:</strong> This AI provides informational guidance only. Always consult a certified, human doctor before taking any medications, modifying treatments, or acting on significant medical information.</p>
+            </div>
+
+            <footer class="chat-input-area">
+                <div class="voice-controls">
+                    <button type="button" id="mic-btn" title="Click to speak">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <!-- Small toggle for Text to Speech auto-play -->
+                    <label class="tts-toggle">
+                        <input type="checkbox" id="autoplay-tts" checked>
+                        <span>🔊 Auto-read</span>
+                    </label>
+                </div>
+                <form id="chat-form">
+                    <input type="text" id="user-input" placeholder="Type or speak your symptoms..." autocomplete="off" required>
+                    <button type="submit" id="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Hidden audio element for TTS playback -->
+    <audio id="tts-audio" class="hidden"></audio>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
