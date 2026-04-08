@@ -17,9 +17,3 @@ Vaidya AI is an AI-powered medical assistant web application built with a Flask 
 - **AI Integration:** `google-genai`
 - **Text-to-Speech:** `gTTS`
 - **Environment Management:** `python-dotenv`
-
-## Installation
-
-1. **Clone or Navigate to the Directory:**
-   ```bash
-   cd medical-ai
